@@ -22,18 +22,52 @@ import java.io.PrintStream;
 public class OfflineOnFailurePublisher
     extends Notifier
 {
+	private boolean unstable = false;
+	private boolean failure = true;
+	
     @DataBoundConstructor
     public OfflineOnFailurePublisher() {
     }
 
-    @Override
+    protected OfflineOnFailurePublisher(boolean unstable, boolean failure) {
+    	this.unstable = unstable;
+    	this.failure = failure;
+    }
+    
+    public boolean isUnstable() {
+		return unstable;
+	}
+
+
+	public void setUnstable(boolean unstable) {
+		this.unstable = unstable;
+	}
+
+
+	public boolean isFailure() {
+		return failure;
+	}
+
+
+	public void setFailure(boolean failure) {
+		this.failure = failure;
+	}
+
+
+	@Override
     public boolean perform(AbstractBuild<?, ?> build,
                            Launcher launcher,
                            BuildListener listener)
         throws InterruptedException,
                IOException
     {
-        if (build.getResult().isWorseOrEqualTo(Result.FAILURE)) {
+		boolean needOffline = false;
+		
+		if ((unstable && build.getResult()==Result.UNSTABLE)||
+				(failure && build.getResult()==Result.FAILURE)) {
+			needOffline = true;
+		}
+		if (needOffline) {
 
             Node buildNode = build.getBuiltOn();
             PrintStream log = listener.getLogger();
@@ -70,6 +104,10 @@ public class OfflineOnFailurePublisher
     public static final class DescriptorImpl
         extends BuildStepDescriptor<Publisher>
     {
+    	
+    	private boolean unstable = false;
+    	private boolean failure = true;
+    	
         public DescriptorImpl()
         {
             super(OfflineOnFailurePublisher.class);
@@ -80,7 +118,27 @@ public class OfflineOnFailurePublisher
             return "Take node offline on failure";
         }
 
-        @Override
+        
+        public boolean isUnstable() {
+    		return unstable;
+    	}
+
+
+    	public void setUnstable(boolean unstable) {
+    		this.unstable = unstable;
+    	}
+
+
+    	public boolean isFailure() {
+    		return failure;
+    	}
+
+
+    	public void setFailure(boolean failure) {
+    		this.failure = failure;
+    	}
+
+		@Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType)
         {
             return true;
@@ -90,7 +148,16 @@ public class OfflineOnFailurePublisher
         public Notifier newInstance(StaplerRequest req, JSONObject formData)
             throws FormException
         {
-            return req.bindJSON(OfflineOnFailurePublisher.class, formData);
+        	
+        	unstable = Boolean.TRUE.equals(formData.get("offline_on_failure_unstable"));
+        	failure = Boolean.TRUE.equals(formData.get("offline_on_failure_failure"));
+        	
+        	OfflineOnFailurePublisher oofp = new OfflineOnFailurePublisher();
+        	oofp.setUnstable(unstable);
+        	oofp.setFailure(failure);
+        	
+            return oofp;
         }
+        
     }
 }

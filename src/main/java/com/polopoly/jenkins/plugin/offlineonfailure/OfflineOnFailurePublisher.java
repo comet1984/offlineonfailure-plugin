@@ -25,18 +25,18 @@ public class OfflineOnFailurePublisher
 	private boolean unstable = false;
 	private boolean failure = true;
 	
-    @DataBoundConstructor
     public OfflineOnFailurePublisher() {
     }
 
-    protected OfflineOnFailurePublisher(boolean unstable, boolean failure) {
+    @DataBoundConstructor
+    public OfflineOnFailurePublisher(boolean unstable, boolean failure) {
     	this.unstable = unstable;
     	this.failure = failure;
     }
     
     public boolean isUnstable() {
-		return unstable;
-	}
+	return unstable;
+    }
 
 
 	public void setUnstable(boolean unstable) {
@@ -105,9 +105,6 @@ public class OfflineOnFailurePublisher
         extends BuildStepDescriptor<Publisher>
     {
     	
-    	private boolean unstable = false;
-    	private boolean failure = true;
-    	
         public DescriptorImpl()
         {
             super(OfflineOnFailurePublisher.class);
@@ -119,25 +116,6 @@ public class OfflineOnFailurePublisher
         }
 
         
-        public boolean isUnstable() {
-    		return unstable;
-    	}
-
-
-    	public void setUnstable(boolean unstable) {
-    		this.unstable = unstable;
-    	}
-
-
-    	public boolean isFailure() {
-    		return failure;
-    	}
-
-
-    	public void setFailure(boolean failure) {
-    		this.failure = failure;
-    	}
-
 		@Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType)
         {
@@ -148,15 +126,7 @@ public class OfflineOnFailurePublisher
         public Notifier newInstance(StaplerRequest req, JSONObject formData)
             throws FormException
         {
-        	
-        	unstable = Boolean.TRUE.equals(formData.get("offline_on_failure_unstable"));
-        	failure = Boolean.TRUE.equals(formData.get("offline_on_failure_failure"));
-        	
-        	OfflineOnFailurePublisher oofp = new OfflineOnFailurePublisher();
-        	oofp.setUnstable(unstable);
-        	oofp.setFailure(failure);
-        	
-            return oofp;
+            return req.bindJSON(OfflineOnFailurePublisher.class, formData);	
         }
         
     }

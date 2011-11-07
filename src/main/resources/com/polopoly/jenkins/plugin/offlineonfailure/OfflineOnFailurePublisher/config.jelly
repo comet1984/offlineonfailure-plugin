@@ -1,9 +1,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <!-- nothing to configure -->
-  <f:entry title="Offline on Failure">
-	 <f:checkbox name="offline_on_failure_failure" checked="${descriptor.failure}" />
+  <f:entry title="Offline on Failure" field="failure">
+	 <f:checkbox default="true" />
   </f:entry>
-  <f:entry title="Offline on Unstable (built successfully, but tests fail)">
-	 <f:checkbox name="offline_on_failure_unstable" checked="${descriptor.unstable}" />
+  <f:entry title="Offline on Unstable (built successfully, but tests fail)" field="unstable">
+	 <f:checkbox default="false" />
   </f:entry>
 </j:jelly>

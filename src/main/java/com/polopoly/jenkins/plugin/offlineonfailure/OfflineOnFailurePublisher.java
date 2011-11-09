@@ -74,7 +74,7 @@ public class OfflineOnFailurePublisher
 
             // Never set master offline
             if (Hudson.getInstance() != buildNode) {
-                buildNode.toComputer().setTemporarilyOffline(true, OfflineCause.create(Messages._OfflineOnFailureCause_Description(build.getFullDisplayName(),build.getUrl(),build.getResult())));
+                buildNode.toComputer().setTemporarilyOffline(true, OfflineCause.create(Messages._OfflineOnFailureCause_Description(build.getFullDisplayName(),"../../"+build.getUrl(),build.getResult())));
                 log.println(Messages.OfflineOnFailure_FailureDetected());
             } else {
                 log.println(Messages.OfflineOnFailure_FailureDetectedOnMaster());
